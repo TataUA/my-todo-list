@@ -34,3 +34,5 @@ export const EditableSpan = (props: EditableSpanType) => {
     <span onDoubleClick={onDoubleClickHandler}>{props.title}</span>
   );
 };
+
+
