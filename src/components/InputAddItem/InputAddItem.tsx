@@ -1,4 +1,5 @@
 import { ChangeEvent, KeyboardEvent, useState } from "react";
+import { Button, TextField } from "@mui/material";
 
 type PropsInputAddItemType = {
   addItem: (title: string) => void;
@@ -28,14 +29,18 @@ export const InputAddItem = (props: PropsInputAddItemType) => {
 
   return (
     <div>
-      <input
+      <TextField
         value={newTaskTitle}
         onChange={onChangeTitleHandler}
         onKeyUp={onKeyEnterHandler}
-        className={error ? "error" : ""}
+        variant="outlined"
+        label="type..."
+        error={!!error}
+        helperText={error}
       />
-      <button onClick={addNewTask}>+</button>
-      {error && <div className="error_message">{error}</div>}
+      <Button onClick={addNewTask} variant={"outlined"}>
+        +
+      </Button>
     </div>
   );
 };
