@@ -1,5 +1,6 @@
 import { ChangeEvent, KeyboardEvent, useState } from "react";
-import { Button, TextField } from "@mui/material";
+import { IconButton, TextField } from "@mui/material";
+import { ControlPoint } from "@mui/icons-material";
 
 type PropsInputAddItemType = {
   addItem: (title: string) => void;
@@ -38,9 +39,9 @@ export const InputAddItem = (props: PropsInputAddItemType) => {
         error={!!error}
         helperText={error}
       />
-      <Button onClick={addNewTask} variant={"outlined"}>
-        +
-      </Button>
+      <IconButton onClick={addNewTask} color="primary">
+        <ControlPoint/>
+      </IconButton>
     </div>
   );
 };

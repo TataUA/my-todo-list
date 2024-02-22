@@ -2,7 +2,7 @@ import { ChangeEvent } from "react";
 import { FilterValueType } from "../../App";
 import { InputAddItem } from "../InputAddItem/InputAddItem";
 import { EditableSpan } from "../EditableSpan/EditableSpan";
-import { Button, IconButton } from "@mui/material";
+import { Button, Checkbox, IconButton } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 export type TaskType = {
   id: string;
@@ -79,8 +79,7 @@ export const TodoList = (props: PropsType) => {
 
           return (
             <li key={task.id} className={task.isDone ? "is_done" : ""}>
-              <input
-                type="checkbox"
+              <Checkbox
                 onChange={changeTaskStatusHandler}
                 checked={task.isDone}
               />
