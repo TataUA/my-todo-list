@@ -23,7 +23,7 @@ export type TodoListType = {
   filter: FilterValueType;
 };
 
-type TasksObjType = {
+export type TasksObjType = {
   [key: string]: Array<TaskType>;
 };
 
