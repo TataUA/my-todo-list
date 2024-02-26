@@ -40,12 +40,12 @@ export const todoListsReduser = (
     }
     case "ADD-TODOLIST": {
       return [
-        ...state,
         {
           id: action.todoListId,
           title: action.title,
           filter: "all",
         },
+        ...state,
       ];
     }
     case "CHANGE-TODOLIST-TITLE": {
