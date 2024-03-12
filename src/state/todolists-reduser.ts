@@ -1,14 +1,14 @@
 import { v1 } from "uuid";
 import { FilterValueType, TodoListType } from "../App";
 
-export type RemoveTodoListActionType = {
-  type: "REMOVE-TODOLIST";
-  todoListId: string;
-};
-
 export type AddTodoListActionType = {
   type: "ADD-TODOLIST";
   title: string;
+  todoListId: string;
+};
+
+export type RemoveTodoListActionType = {
+  type: "REMOVE-TODOLIST";
   todoListId: string;
 };
 
@@ -24,20 +24,19 @@ export type ChangeTodoListFilterActionType = {
   filter: FilterValueType;
 };
 
-type ActionsType =
+type ActionsTypes =
   | RemoveTodoListActionType
   | AddTodoListActionType
   | ChangeTodoListTitleActionType
   | ChangeTodoListFilterActionType;
 
+const initialState: Array<TodoListType> = [];
+
 export const todoListsReduser = (
-  state: Array<TodoListType>,
-  action: ActionsType
+  state: Array<TodoListType> = initialState,
+  action: ActionsTypes
 ): Array<TodoListType> => {
   switch (action.type) {
-    case "REMOVE-TODOLIST": {
-      return state.filter((item) => item.id !== action.todoListId);
-    }
     case "ADD-TODOLIST": {
       return [
         {
@@ -48,37 +47,38 @@ export const todoListsReduser = (
         ...state,
       ];
     }
+    case "REMOVE-TODOLIST": {
+      return state.filter((item) => item.id !== action.todoListId);
+    }
     case "CHANGE-TODOLIST-TITLE": {
-      const currentTodoList = state.find(
-        (item) => item.id === action.todoListId
+      let copyState = [...state];
+      copyState = copyState.map((item) =>
+        item.id === action.todoListId ? { ...item, title: action.title } : item
       );
-      if (currentTodoList) {
-        currentTodoList.title = action.title;
-      }
-      return [...state];
+      return copyState;
     }
     case "CHANGE-TODOLIST-FILTER": {
-      const currentTodoList = state.find(
-        (item) => item.id === action.todoListId
+      let copyState = [...state];
+      copyState = copyState.map((item) =>
+        item.id === action.todoListId
+          ? { ...item, filter: action.filter }
+          : item
       );
-      if (currentTodoList) {
-        currentTodoList.filter = action.filter;
-      }
-      return [...state];
+      return copyState;
     }
     default:
-      throw new Error("Type didn`t found");
+      return state;
   }
+};
+
+export const addTodoListAC = (title: string): AddTodoListActionType => {
+  return { type: "ADD-TODOLIST", title, todoListId: v1() };
 };
 
 export const removeTodoListAC = (
   todoListId: string
 ): RemoveTodoListActionType => {
   return { type: "REMOVE-TODOLIST", todoListId };
-};
-
-export const addTodoListAC = (title: string): AddTodoListActionType => {
-  return { type: "ADD-TODOLIST", title, todoListId: v1() };
 };
 
 export const changeTodoListTitleAC = (

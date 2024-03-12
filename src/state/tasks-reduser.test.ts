@@ -1,6 +1,6 @@
 import { TasksObjType } from "../App";
 import {
-  addTasktAC,
+  addTaskAC,
   changeTaskStatustAC,
   changeTaskTitletAC,
   removeTaskAC,
@@ -45,7 +45,7 @@ test("correct task should be added from correct todolist", () => {
     ],
   };
 
-  const action = addTasktAC("book4", "todoListId1");
+  const action = addTaskAC("book4", "todoListId1");
   const endState = tasksReduser(startState, action);
 
   expect(endState["todoListId1"].length).toBe(4);

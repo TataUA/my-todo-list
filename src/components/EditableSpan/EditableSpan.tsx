@@ -1,5 +1,5 @@
-import { TextField } from "@mui/material";
 import { ChangeEvent, useState } from "react";
+import { TextField } from "@mui/material";
 
 type EditableSpanType = {
   title: string;
@@ -8,29 +8,40 @@ type EditableSpanType = {
 
 export const EditableSpan = (props: EditableSpanType) => {
   const [editeMode, setEditeMode] = useState(false);
-  const [title, setTitle] = useState("");
+  const [newTitle, setNewTitle] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const onDoubleClickHandler = () => {
     setEditeMode(true);
-    setTitle(props.title);
+    setNewTitle(props.title);
   };
 
   const onBlurHandler = () => {
+    if (newTitle.trim() === "") {
+      setNewTitle(props.title);
+      setError("field 'title' is required");
+      return;
+    }
     setEditeMode(false);
-    props.onChange(title);
+    props.onChange(newTitle.trim());
   };
 
   const onChangeTitleHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.currentTarget.value);
+    if (error !== null) {
+      setError(null);
+    }
+    setNewTitle(e.currentTarget.value);
   };
 
   return editeMode ? (
     <TextField
-      value={title}
+      value={newTitle}
       onChange={onChangeTitleHandler}
       onBlur={onBlurHandler}
       autoFocus
       variant="standard"
+      error={!!error}
+      helperText={error}
     />
   ) : (
     <span onDoubleClick={onDoubleClickHandler}>{props.title}</span>

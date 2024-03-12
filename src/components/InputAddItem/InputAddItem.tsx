@@ -7,31 +7,33 @@ type PropsInputAddItemType = {
 };
 
 export const InputAddItem = (props: PropsInputAddItemType) => {
-  const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [title, setTitle] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const onChangeTitleHandler = (e: ChangeEvent<HTMLInputElement>) =>
-    setNewTaskTitle(e.currentTarget.value);
+    setTitle(e.currentTarget.value);
 
-  const addNewTask = () => {
-    if (newTaskTitle.trim() === "") {
-      setNewTaskTitle("");
+  const addNewItem = () => {
+    if (title.trim() === "") {
+      setTitle("");
       setError("field 'title' is required");
       return;
     }
-    props.addItem(newTaskTitle.trim());
-    setNewTaskTitle("");
+    props.addItem(title.trim());
+    setTitle("");
   };
 
   const onKeyEnterHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-    setError(null);
-    if (e.key === "Enter") addNewTask();
+    if (error !== null) {
+      setError(null);
+    }
+    if (e.key === "Enter") addNewItem();
   };
 
   return (
     <div>
       <TextField
-        value={newTaskTitle}
+        value={title}
         onChange={onChangeTitleHandler}
         onKeyUp={onKeyEnterHandler}
         variant="outlined"
@@ -39,8 +41,8 @@ export const InputAddItem = (props: PropsInputAddItemType) => {
         error={!!error}
         helperText={error}
       />
-      <IconButton onClick={addNewTask} color="primary">
-        <ControlPoint/>
+      <IconButton onClick={addNewItem} color="primary">
+        <ControlPoint />
       </IconButton>
     </div>
   );

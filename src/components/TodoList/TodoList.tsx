@@ -1,42 +1,27 @@
-import { ChangeEvent } from "react";
-import { FilterValueType } from "../../App";
+import { useSelector, useDispatch } from "react-redux";
+import { Button, IconButton } from "@mui/material";
+import { Delete } from "@mui/icons-material";
+import { AppRootState } from "../../state/store";
+import { addTaskAC } from "../../state/tasks-reduser";
+import { Task } from "../Task/Task";
 import { InputAddItem } from "../InputAddItem/InputAddItem";
 import { EditableSpan } from "../EditableSpan/EditableSpan";
-import { Button, Checkbox, IconButton } from "@mui/material";
-import { Delete } from "@mui/icons-material";
-
-export type TaskType = {
-  id: string;
-  title: string;
-  isDone: boolean;
-};
+import { FilterValueType, TaskType } from "../../App";
 
 type PropsType = {
   id: string;
   title: string;
   removeTodoList: (idTodoList: string) => void;
   changeTodoListTitle: (idTodoList: string, newTitle: string) => void;
-  tasks: Array<TaskType>;
-  addTask: (title: string, idTodoList: string) => void;
-  removeTask: (idTask: string, idTodoList: string) => void;
   changeTodoListFilter: (idTodoList: string, value: FilterValueType) => void;
-  changeTaskStatus: (
-    idTask: string,
-    isDone: boolean,
-    idTodoList: string
-  ) => void;
-  changeTaskTitle: (
-    idTask: string,
-    newTitle: string,
-    idTodoList: string
-  ) => void;
   filter: FilterValueType;
 };
 
 export const TodoList = (props: PropsType) => {
-  const addItem = (title: string) => {
-    props.addTask(title, props.id);
-  };
+  const tasks = useSelector<AppRootState, Array<TaskType>>(
+    (state) => state.tasks[props.id]
+  );
+  const dispatch = useDispatch();
 
   const removeTodoListHandler = () => {
     props.removeTodoList(props.id);
@@ -54,6 +39,22 @@ export const TodoList = (props: PropsType) => {
   const onCompletedClickHandler = () =>
     props.changeTodoListFilter(props.id, "completed");
 
+  let allTodoListTasks = [...tasks];
+  let tasksForTodoList = allTodoListTasks;
+
+  if (props.filter === "active") {
+    if (allTodoListTasks)
+      tasksForTodoList = allTodoListTasks.filter(
+        (task) => task.isDone === false
+      );
+  }
+  if (props.filter === "completed") {
+    if (allTodoListTasks)
+      tasksForTodoList = allTodoListTasks.filter(
+        (task) => task.isDone === true
+      );
+  }
+
   return (
     <div>
       <h3>
@@ -66,46 +67,17 @@ export const TodoList = (props: PropsType) => {
           <Delete />
         </IconButton>
       </h3>
-      <InputAddItem addItem={addItem} />
-      <ul>
-        {props.tasks &&
-          props.tasks.map((task) => {
-            const removeTaskHandler = () => props.removeTask(task.id, props.id);
-
-            const changeTaskStatusHandler = (
-              e: ChangeEvent<HTMLInputElement>
-            ) =>
-              props.changeTaskStatus(
-                task.id,
-                e.currentTarget.checked,
-                props.id
-              );
-
-            const changeTaskTitleHandler = (value: string) => {
-              props.changeTaskTitle(task.id, value, props.id);
-            };
-
-            return (
-              <li key={task.id} className={task.isDone ? "is_done" : ""}>
-                <Checkbox
-                  onChange={changeTaskStatusHandler}
-                  checked={task.isDone}
-                />
-                <EditableSpan
-                  title={task.title}
-                  onChange={changeTaskTitleHandler}
-                />
-                <IconButton
-                  onClick={removeTaskHandler}
-                  aria-label="delete"
-                  size="small"
-                >
-                  <Delete fontSize="inherit" />
-                </IconButton>
-              </li>
-            );
+      <InputAddItem
+        addItem={(title) => {
+          dispatch(addTaskAC(title, props.id));
+        }}
+      />
+      <div>
+        {tasksForTodoList &&
+          tasksForTodoList.map((task) => {
+            return <Task key={task.id} task={task} todoListId={props.id} />;
           })}
-      </ul>
+      </div>
       <div>
         <Button
           variant={props.filter === "all" ? "contained" : "outlined"}
